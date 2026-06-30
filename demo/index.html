@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10timesPod - 双语字幕播客播放器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .active-segment {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.2) 0%, transparent 100%);
+            border-left: 3px solid #3b82f6;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white min-h-screen">
+    
+    <!-- Header -->
+    <header class="border-b border-slate-700 bg-slate-900/50 backdrop-blur-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        10timesPod
+                    </h1>
+                    <span class="text-sm text-slate-400">双语字幕播客播放器</span>
+                </div>
+                <nav class="flex items-center space-x-6">
+                    <a href="#" onclick="showPage('discover')" class="nav-link text-slate-300 hover:text-white transition">发现</a>
+                    <a href="#" onclick="showPage('subscriptions')" class="nav-link text-slate-300 hover:text-white transition">订阅</a>
+                    <a href="#" onclick="showPage('settings')" class="nav-link text-slate-300 hover:text-white transition">设置</a>
+                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition">
+                        登录
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 pb-32">
+        
+        <!-- Discover Page -->
+        <div id="discover-page" class="page">
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold mb-2">探索优质英文播客</h2>
+                <p class="text-slate-400">带中文字幕，轻松听懂</p>
+            </section>
+
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <div class="relative">
+                    <input type="text" placeholder="搜索播客或粘贴 RSS Feed URL..." 
+                           class="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 transition">
+                    <button class="absolute right-2 top-2 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-sm transition">
+                        订阅
+                    </button>
+                </div>
+            </div>
+
+            <!-- Featured Podcasts -->
+            <section class="mb-12">
+                <h3 class="text-xl font-semibold mb-4">热门推荐</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Podcast Card 1 -->
+                    <div class="bg-slate-800/50 rounded-lg overflow-hidden border border-slate-700 hover:border-blue-500 transition cursor-pointer" onclick="showPage('player')">
+                        <img src="https://placehold.co/400x400/4a5568/ffffff?text=Lex+Fridman" alt="Podcast Cover" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h4 class="font-semibold text-lg mb-1">Lex Fridman Podcast</h4>
+                            <p class="text-sm text-slate-400 mb-2">Conversations about AI, science, technology, and more</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span>2 天前更新</span>
+                                <span class="px-2 py-1 bg-blue-600/20 text-blue-400 rounded">3 new</span>
+                            </div>
+                            <button class="w-full mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition">
+                                订阅
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Podcast Card 2 -->
+                    <div class="bg-slate-800/50 rounded-lg overflow-hidden border border-slate-700 hover:border-blue-500 transition cursor-pointer">
+                        <img src="https://placehold.co/400x400/059669/ffffff?text=Huberman+Lab" alt="Podcast Cover" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h4 class="font-semibold text-lg mb-1">Huberman Lab</h4>
+                            <p class="text-sm text-slate-400 mb-2">Science-based tools for everyday life</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span>5 天前更新</span>
+                                <span class="px-2 py-1 bg-blue-600/20 text-blue-400 rounded">1 new</span>
+                            </div>
+                            <button class="w-full mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition">
+                                订阅
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Podcast Card 3 -->
+                    <div class="bg-slate-800/50 rounded-lg overflow-hidden border border-slate-700 hover:border-blue-500 transition cursor-pointer">
+                        <img src="https://placehold.co/400x400/dc2626/ffffff?text=Tim+Ferriss" alt="Podcast Cover" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h4 class="font-semibold text-lg mb-1">The Tim Ferriss Show</h4>
+                            <p class="text-sm text-slate-400 mb-2">World-class performers deconstructed</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span>1 周前更新</span>
+                                <span class="px-2 py-1 bg-blue-600/20 text-blue-400 rounded">5 new</span>
+                            </div>
+                            <button class="w-full mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition">
+                                订阅
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Latest Episodes -->
+            <section>
+                <h3 class="text-xl font-semibold mb-4">最新更新</h3>
+                <div class="space-y-3">
+                    <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700 hover:border-blue-500 transition cursor-pointer flex items-center space-x-4" onclick="showPage('player')">
+                        <img src="https://placehold.co/80x80/4a5568/ffffff?text=Ep" alt="Episode" class="w-20 h-20 rounded">
+                        <div class="flex-1">
+                            <h4 class="font-medium mb-1">The Future of AI with Sam Altman</h4>
+                            <p class="text-sm text-slate-400 mb-2">Lex Fridman Podcast • 2h 15min • 2 天前</p>
+                            <div class="flex items-center space-x-2">
+                                <button class="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm transition">
+                                    ▶ 播放
+                                </button>
+                                <span class="text-xs text-slate-500">已转录 • 已翻译</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Subscriptions Page -->
+        <div id="subscriptions-page" class="page hide">
+            <section class="mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-2">我的订阅</h2>
+                        <p class="text-slate-400">管理你订阅的播客</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition">
+                            网格视图
+                        </button>
+                        <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition">
+                            列表视图
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Subscribed Podcast -->
+                    <div class="bg-slate-800/50 rounded-lg overflow-hidden border border-slate-700">
+                        <img src="https://placehold.co/400x400/4a5568/ffffff?text=Lex+Fridman" alt="Podcast" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <h4 class="font-semibold text-lg">Lex Fridman Podcast</h4>
+                                <span class="px-2 py-1 bg-red-600/20 text-red-400 text-xs rounded">3 new</span>
+                            </div>
+                            <p class="text-sm text-slate-400 mb-3">最新: The Future of AI with Sam Altman</p>
+                            <div class="text-xs text-slate-500 mb-3">2 天前</div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="showPage('player')" class="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm transition">
+                                    ▶ 播放最新
+                                </button>
+                                <button class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition">
+                                    取消订阅
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add more subscribed podcasts -->
+                    <div class="bg-slate-800/50 rounded-lg overflow-hidden border border-slate-700">
+                        <img src="https://placehold.co/400x400/059669/ffffff?text=Huberman+Lab" alt="Podcast" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <h4 class="font-semibold text-lg">Huberman Lab</h4>
+                                <span class="px-2 py-1 bg-red-600/20 text-red-400 text-xs rounded">1 new</span>
+                            </div>
+                            <p class="text-sm text-slate-400 mb-3">最新: How to Optimize Your Sleep</p>
+                            <div class="text-xs text-slate-500 mb-3">5 天前</div>
+                            <div class="flex items-center space-x-2">
+                                <button class="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm transition">
+                                    ▶ 播放最新
+                                </button>
+                                <button class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition">
+                                    取消订阅
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Player Page -->
+        <div id="player-page" class="page hide">
+            <button onclick="showPage('discover')" class="mb-4 text-slate-400 hover:text-white transition flex items-center space-x-2">
+                <span>←</span>
+                <span>返回</span>
+            </button>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left: Episode Info & Controls -->
+                <div class="lg:col-span-1">
+                    <div class="bg-slate-800/50 rounded-lg p-6 border border-slate-700 sticky top-24">
+                        <img src="https://placehold.co/400x400/4a5568/ffffff?text=Episode" alt="Episode Cover" class="w-full rounded-lg mb-4">
+                        <h2 class="text-xl font-bold mb-2">The Future of AI with Sam Altman</h2>
+                        <p class="text-sm text-slate-400 mb-4">Lex Fridman Podcast</p>
+                        <div class="flex items-center space-x-3 text-xs text-slate-500 mb-6">
+                            <span>2026-03-28</span>
+                            <span>•</span>
+                            <span>2h 15min</span>
+                        </div>
+
+                        <!-- Display Mode Toggle -->
+                        <div class="mb-6">
+                            <div class="text-sm text-slate-400 mb-2">字幕显示</div>
+                            <div class="flex space-x-2">
+                                <button onclick="setDisplayMode('en')" class="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm transition display-mode-btn">
+                                    仅英文
+                                </button>
+                                <button onclick="setDisplayMode('zh')" class="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm transition display-mode-btn">
+                                    仅中文
+                                </button>
+                                <button onclick="setDisplayMode('both')" class="flex-1 px-3 py-2 bg-blue-600 rounded text-sm transition display-mode-btn active">
+                                    双语
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Progress -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-xs text-slate-400 mb-2">
+                                <span id="current-time">12:30</span>
+                                <span id="total-time">2:15:00</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden cursor-pointer">
+                                <div class="h-full bg-blue-600" style="width: 9.3%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Playback Controls -->
+                        <div class="flex items-center justify-center space-x-4 mb-4">
+                            <button class="p-2 hover:bg-slate-700 rounded-lg transition">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M11.5 12L20 18V6l-8.5 6z M4 18h3V6H4v12z"/>
+                                </svg>
+                            </button>
+                            <button id="play-pause-btn" class="p-4 bg-blue-600 hover:bg-blue-700 rounded-full transition">
+                                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </button>
+                            <button class="p-2 hover:bg-slate-700 rounded-lg transition">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Speed Control -->
+                        <div class="flex items-center justify-between text-sm">
+                            <button class="px-3 py-1 hover:bg-slate-700 rounded transition">-15s</button>
+                            <div class="flex space-x-1">
+                                <button class="px-2 py-1 hover:bg-slate-700 rounded transition text-slate-400">0.75x</button>
+                                <button class="px-2 py-1 bg-blue-600 rounded transition">1.0x</button>
+                                <button class="px-2 py-1 hover:bg-slate-700 rounded transition text-slate-400">1.25x</button>
+                                <button class="px-2 py-1 hover:bg-slate-700 rounded transition text-slate-400">1.5x</button>
+                            </div>
+                            <button class="px-3 py-1 hover:bg-slate-700 rounded transition">+15s</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Transcript & Translation -->
+                <div class="lg:col-span-2">
+                    <div class="bg-slate-800/50 rounded-lg p-6 border border-slate-700">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold">实时字幕</h3>
+                            <div class="flex items-center space-x-2 text-xs text-slate-500">
+                                <span class="px-2 py-1 bg-green-600/20 text-green-400 rounded">已转录</span>
+                                <span class="px-2 py-1 bg-blue-600/20 text-blue-400 rounded">已翻译</span>
+                            </div>
+                        </div>
+
+                        <!-- Transcript Segments -->
+                        <div id="transcript-container" class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                            
+                            <!-- Segment 1 -->
+                            <div class="segment p-4 rounded-lg hover:bg-slate-700/50 cursor-pointer transition border-l-2 border-transparent" onclick="jumpToTime(0)">
+                                <div class="flex items-start space-x-3">
+                                    <div class="text-xs text-slate-500 font-mono mt-1">00:00</div>
+                                    <div class="flex-1">
+                                        <p class="text-base mb-2 segment-en">Welcome to the Lex Fridman Podcast. Today's guest is Sam Altman, CEO of OpenAI.</p>
+                                        <p class="text-sm text-slate-400 segment-zh">欢迎来到 Lex Fridman 播客。今天的嘉宾是 OpenAI 的 CEO Sam Altman。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Segment 2 (Active) -->
+                            <div class="segment p-4 rounded-lg cursor-pointer transition border-l-2 border-blue-500 active-segment" onclick="jumpToTime(12)">
+                                <div class="flex items-start space-x-3">
+                                    <div class="text-xs text-blue-400 font-mono mt-1">00:12</div>
+                                    <div class="flex-1">
+                                        <p class="text-base mb-2 font-medium segment-en">Sam, let's talk about the future of artificial intelligence. What do you think is the most exciting development in the next few years?</p>
+                                        <p class="text-sm text-slate-300 segment-zh">Sam，让我们谈谈人工智能的未来。你认为未来几年最令人兴奋的发展是什么？</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Segment 3 -->
+                            <div class="segment p-4 rounded-lg hover:bg-slate-700/50 cursor-pointer transition border-l-2 border-transparent" onclick="jumpToTime(25)">
+                                <div class="flex items-start space-x-3">
+                                    <div class="text-xs text-slate-500 font-mono mt-1">00:25</div>
+                                    <div class="flex-1">
+                                        <p class="text-base mb-2 segment-en">I think we're on the verge of some really transformative breakthroughs. The models are getting smarter at an incredible pace.</p>
+                                        <p class="text-sm text-slate-400 segment-zh">我认为我们正处于一些真正变革性突破的边缘。这些模型正以惊人的速度变得更加智能。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Segment 4 -->
+                            <div class="segment p-4 rounded-lg hover:bg-slate-700/50 cursor-pointer transition border-l-2 border-transparent" onclick="jumpToTime(38)">
+                                <div class="flex items-start space-x-3">
+                                    <div class="text-xs text-slate-500 font-mono mt-1">00:38</div>
+                                    <div class="flex-1">
+                                        <p class="text-base mb-2 segment-en">One thing that excites me is how AI will augment human creativity and problem-solving capabilities.</p>
+                                        <p class="text-sm text-slate-400 segment-zh">让我兴奋的一件事是 AI 将如何增强人类的创造力和解决问题的能力。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Segment 5 -->
+                            <div class="segment p-4 rounded-lg hover:bg-slate-700/50 cursor-pointer transition border-l-2 border-transparent" onclick="jumpToTime(52)">
+                                <div class="flex items-start space-x-3">
+                                    <div class="text-xs text-slate-500 font-mono mt-1">00:52</div>
+                                    <div class="flex-1">
+                                        <p class="text-base mb-2 segment-en">We're moving towards systems that can reason, plan, and collaborate with humans in ways we've never seen before.</p>
+                                        <p class="text-sm text-slate-400 segment-zh">我们正在走向能够以前所未有的方式与人类进行推理、规划和协作的系统。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- More segments... -->
+                            <div class="segment p-4 rounded-lg hover:bg-slate-700/50 cursor-pointer transition border-l-2 border-transparent" onclick="jumpToTime(68)">
+                                <div class="flex items-start space-x-3">
+                                    <div class="text-xs text-slate-500 font-mono mt-1">01:08</div>
+                                    <div class="flex-1">
+                                        <p class="text-base mb-2 segment-en">The key is ensuring that as these systems become more powerful, they remain aligned with human values and goals.</p>
+                                        <p class="text-sm text-slate-400 segment-zh">关键是确保随着这些系统变得更加强大，它们仍然与人类的价值观和目标保持一致。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page hide">
+            <section class="mb-8">
+                <h2 class="text-3xl font-bold mb-2">设置</h2>
+                <p class="text-slate-400">配置 AI 模型与个人偏好</p>
+            </section>
+
+            <div class="max-w-4xl">
+                <!-- AI Model Settings -->
+                <div class="bg-slate-800/50 rounded-lg p-6 border border-slate-700 mb-6">
+                    <h3 class="text-xl font-semibold mb-4">AI 模型配置</h3>
+                    
+                    <!-- Provider Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">服务提供方</label>
+                        <select class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-blue-500">
+                            <option value="openrouter">OpenRouter (推荐)</option>
+                            <option value="openai">OpenAI 直连</option>
+                            <option value="custom">自定义端点</option>
+                        </select>
+                        <p class="text-xs text-slate-500 mt-2">OpenRouter 是聚合网关，一个 Key 访问所有主流模型</p>
+                    </div>
+
+                    <!-- API Key -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">API Key</label>
+                        <div class="relative">
+                            <input type="password" placeholder="sk-or-v1-xxxxxxxxxxxx" 
+                                   class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-blue-500">
+                            <button class="absolute right-2 top-2 px-3 py-1 text-xs text-slate-400 hover:text-white transition">
+                                显示
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">
+                            API Key 仅存储在本地浏览器，不会上传服务器。
+                            <a href="#" class="text-blue-400 hover:underline">获取 API Key →</a>
+                        </p>
+                    </div>
+
+                    <!-- Base URL (for custom) -->
+                    <div class="mb-6 opacity-50">
+                        <label class="block text-sm font-medium mb-2">Base URL (仅自定义端点)</label>
+                        <input type="text" placeholder="https://api.openai.com/v1" 
+                               disabled
+                               class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <!-- Model Selection -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">转录模型</label>
+                            <select class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-blue-500">
+                                <option value="whisper-large-v3">Whisper Large v3</option>
+                                <option value="whisper-1">Whisper v1</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">翻译模型</label>
+                            <select class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-blue-500">
+                                <option value="gpt-4o-mini">GPT-4O Mini</option>
+                                <option value="claude-sonnet-4">Claude Sonnet 4</option>
+                                <option value="deepseek-chat">DeepSeek Chat</option>
+                                <option value="gemini-pro">Gemini Pro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Test Connection -->
+                    <div class="flex items-center space-x-3">
+                        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition">
+                            测试连接
+                        </button>
+                        <button class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition">
+                            保存配置
+                        </button>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-slate-400">连接正常</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Playback Settings -->
+                <div class="bg-slate-800/50 rounded-lg p-6 border border-slate-700 mb-6">
+                    <h3 class="text-xl font-semibold mb-4">播放设置</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="font-medium">自动续播</div>
+                                <div class="text-sm text-slate-400">记住上次播放位置</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="font-medium">字幕自动滚动</div>
+                                <div class="text-sm text-slate-400">播放时自动滚动到当前句</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="font-medium">默认播放速度</div>
+                                <div class="text-sm text-slate-400">启动时的播放速度</div>
+                            </div>
+                            <select class="px-3 py-1 bg-slate-700 border border-slate-600 rounded text-sm">
+                                <option>0.75x</option>
+                                <option selected>1.0x</option>
+                                <option>1.25x</option>
+                                <option>1.5x</option>
+                                <option>2.0x</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Settings -->
+                <div class="bg-slate-800/50 rounded-lg p-6 border border-slate-700">
+                    <h3 class="text-xl font-semibold mb-4">账户设置</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">邮箱</label>
+                            <input type="email" value="user@example.com" disabled
+                                   class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg opacity-50">
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-700">
+                            <button class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition text-sm">
+                                退出登录
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Play Bar -->
+    <div class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 backdrop-blur-lg z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Episode Info -->
+                <div class="flex items-center space-x-3 flex-1">
+                    <img src="https://placehold.co/56x56/4a5568/ffffff?text=Ep" alt="Playing" class="w-14 h-14 rounded">
+                    <div class="min-w-0">
+                        <div class="font-medium truncate">The Future of AI with Sam Altman</div>
+                        <div class="text-sm text-slate-400 truncate">Lex Fridman Podcast</div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center space-x-4 flex-1 justify-center">
+                    <button class="p-2 hover:bg-slate-800 rounded-full transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.5 12L20 18V6l-8.5 6z M4 18h3V6H4v12z"/>
+                        </svg>
+                    </button>
+                    <button class="p-3 bg-blue-600 hover:bg-blue-700 rounded-full transition">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </button>
+                    <button class="p-2 hover:bg-slate-800 rounded-full transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Progress & Time -->
+                <div class="flex items-center space-x-4 flex-1 justify-end">
+                    <span class="text-sm text-slate-400">12:30</span>
+                    <div class="w-32 h-1 bg-slate-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-600" style="width: 9.3%"></div>
+                    </div>
+                    <span class="text-sm text-slate-400">2:15:00</span>
+                    <button class="p-2 hover:bg-slate-800 rounded transition text-sm">
+                        1.0x
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation
+        let currentPage = 'discover';
+        let displayMode = 'both';
+
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hide');
+            });
+            
+            // Show selected page
+            document.getElementById(pageName + '-page').classList.remove('hide');
+            currentPage = pageName;
+
+            // Update nav highlighting (optional)
+            console.log('Switched to page:', pageName);
+        }
+
+        // Display Mode Toggle
+        function setDisplayMode(mode) {
+            displayMode = mode;
+            
+            // Update button states
+            document.querySelectorAll('.display-mode-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'active');
+                btn.classList.add('bg-slate-700');
+            });
+            event.target.classList.add('bg-blue-600', 'active');
+            event.target.classList.remove('bg-slate-700');
+
+            // Update segment visibility
+            const segments = document.querySelectorAll('.segment');
+            segments.forEach(segment => {
+                const enText = segment.querySelector('.segment-en');
+                const zhText = segment.querySelector('.segment-zh');
+                
+                if (mode === 'en') {
+                    enText.style.display = 'block';
+                    zhText.style.display = 'none';
+                } else if (mode === 'zh') {
+                    enText.style.display = 'none';
+                    zhText.style.display = 'block';
+                } else {
+                    enText.style.display = 'block';
+                    zhText.style.display = 'block';
+                }
+            });
+        }
+
+        // Jump to timestamp
+        function jumpToTime(seconds) {
+            console.log('Jump to:', seconds, 'seconds');
+            // In real implementation, this would seek the audio player
+            
+            // Update active segment highlight
+            document.querySelectorAll('.segment').forEach(seg => {
+                seg.classList.remove('active-segment', 'border-blue-500');
+                seg.classList.add('border-transparent');
+                seg.querySelector('.text-blue-400')?.classList.remove('text-blue-400');
+                seg.querySelector('.text-blue-400')?.classList.add('text-slate-500');
+            });
+            
+            event.currentTarget.classList.add('active-segment', 'border-blue-500');
+            event.currentTarget.classList.remove('border-transparent');
+            event.currentTarget.querySelector('.text-slate-500')?.classList.remove('text-slate-500');
+            event.currentTarget.querySelector('[class*="font-mono"]')?.classList.add('text-blue-400');
+        }
+
+        // Simulate auto-scroll on play (demo)
+        let simulationInterval;
+        document.getElementById('play-pause-btn')?.addEventListener('click', function() {
+            const icon = this.querySelector('svg path');
+            const isPlaying = icon.getAttribute('d').includes('M8 5v14l11-7z');
+            
+            if (isPlaying) {
+                // Switch to pause icon
+                icon.setAttribute('d', 'M6 4h4v16H6V4zm8 0h4v16h-4V4z');
+            } else {
+                // Switch to play icon
+                icon.setAttribute('d', 'M8 5v14l11-7z');
+            }
+        });
+
+        console.log('10timesPod Demo Loaded');
+    </script>
+
+</body>
+</html>
